@@ -1,5 +1,9 @@
 @extends('administrator.layout.main')
 
+@push('title')
+    Users
+@endpush
+
 @section('content')
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -13,7 +17,7 @@
                     <button type="button" id="btn_filter" class="btn btn-primary label-button-master my-3">
                         <i class="bi bi-filter"></i> Filter
                     </button>
-                    <a href="{{ route('admin.kas.add')}}" class="btn btn-primary label-button-master my-3">
+                    <a href="{{ route('admin.users.add')}}" class="btn btn-primary label-button-master my-3">
                         <i class="mdi mdi-file-check btn-icon-prepend"></i> Tambah
                     </a>
                 </div>
@@ -51,13 +55,14 @@
             </div>
         <!--end::Card toolbar-->
         </div>
-        <table class="table table-hover" id="data_kas">
+        <table class="table table-hover" id="datatable">
           <thead>
             <tr>
+              <th>No</th>
               <th>Kode</th>
               <th>Nama</th>
               <th>Email</th>
-              <th>Action</th>
+              <th width="15px">Action</th>
             </tr>
           </thead>
         </table>
@@ -65,52 +70,137 @@
     </div>
   </div>
 @endsection
+@php
+    $Route = route('admin.users');
+@endphp
+<!-- ... Your HTML code ... -->
 
 @push('js')
 <script type="text/javascript">
     $(document).ready(function() {
-        var data_kas = $('#data_kas').DataTable({
-                "oLanguage": {
-                    "oPaginate": {
-                        "sFirst": "<i class='ti-angle-left'></i>",
-                        "sPrevious": "&#8592;",
-                        "sNext": "&#8594;",
-                        "sLast": "<i class='ti-angle-right'></i>"
-                    }
+      
+        var data_table = $('#datatable').DataTable({
+            "oLanguage": {
+                "oPaginate": {
+                    "sFirst": "<i class='ti-angle-left'></i>",
+                    "sPrevious": "&#8592;",
+                    "sNext": "&#8594;",
+                    "sLast": "<i class='ti-angle-right'></i>"
+                }
+            },
+            processing: true,
+            serverSide: true,
+            order: [[0, 'desc']],
+            ajax: {
+                url: '{{ route('admin.users.getdata') }}',
+                dataType: "JSON",
+                type: "GET",
+            },
+            columns: [
+                {
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
                 },
-                processing: true,
-                serverSide: true,
-                order: [[0, 'desc']],
-                ajax: {
-                    url: '{{ route('admin.users.getdata') }}',
-                    dataType: "JSON",
-                    type: "GET",
-
-                },
-                columns: [
-                    {
-                        render: function(data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        },
-                    },
-                    {
-
-                        data: 'kode'
-                    },
-                    {
-
-                        data: 'name'
-                    },
-                    {
-
-                        data: 'email'
-                    },
-                    {
-                        data: 'action', 'searchable': false
-
-                    }
-                ],
-            });
+                { data: 'kode', name: 'kode' },
+                { data: 'name', name: 'name' },
+                { data: 'email', name: 'email' },
+                {
+                    data: 'action', name:'action',
+                    'searchable': false
+                }
+            ],
+        });
     });
-</script>
+
+    $(document).on('click', '.delete', function(event) {
+    var id = $(this).data('id');
+    var title = $(this).data('title');
+    // var data_table = data_table;
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success mx-4',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: 'Apakah anda yakin ingin menghapus data ini : ' + title,
+        icon: 'warning',
+        buttonsStyling: false,
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Saya yakin!',
+        cancelButtonText: 'Tidak, Batalkan!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.users.delete') }}",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "_method": "DELETE",
+                    "id": id,
+                },
+                success: function() {
+                    swalWithBootstrapButtons.fire(
+                        'Berhasil dihapus!',
+                        'Data berhasil dihapus.',
+                        'success'
+                    );
+                    // data_table.ajax.reload(null,false)
+                    window.location.href = "<?php echo $Route; ?>";
+                }
+            });
+        }
+    });
+});
+
+
+@if (session()->has('success'))
+    toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "rtl": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": 300,
+    "hideDuration": 1000,
+    "timeOut": 5000,
+    "extendedTimeOut": 1000,
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  };
+      toastr["success"]("{{ Session::get('success') }}")
+      @endif
+      </script>
+    <script>
+        @if (session()->has('error'))
+    toastr.options = {
+    "closeButton": true,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "rtl": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": 300,
+    "hideDuration": 1000,
+    "timeOut": 5000,
+    "extendedTimeOut": 1000,
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  };
+      toastr["error"]("{{ Session::get('error') }}")
+      @endif
+    </script>
 @endpush

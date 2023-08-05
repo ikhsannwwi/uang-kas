@@ -25,13 +25,16 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('dashboard',[DashboardController::class,'index'])->name('admin.dashboard');
 
     // Users
-    Route::get('users',[UserController::class,'index'])->name('admin.users.index');
+    Route::get('users',[UserController::class,'index'])->name('admin.users');
     Route::get('users/getdata',[UserController::class,'getdata'])->name('admin.users.getdata');
     Route::get('users/add',[UserController::class,'add'])->name('admin.users.add');
     Route::post('users/save',[UserController::class,'save'])->name('admin.users.save');
     Route::get('users/edit/{id}',[UserController::class,'edit'])->name('admin.users.edit');
-    Route::post('users/update/{id}',[UserController::class,'update'])->name('admin.users.update');
-    Route::get('users/delete/{id}',[UserController::class,'delete'])->name('admin.users.delete');
+    Route::put('users/update/{id}',[UserController::class,'update'])->name('admin.users.update');
+    Route::delete('users/delete',[UserController::class,'delete'])->name('admin.users.delete');
+    Route::get('users/detail/{id}',[UserController::class,'detail'])->name('admin.users.detail');
+    Route::post('users/isExistKode',[UserController::class,'isExistKode'])->name('admin.users.isExistKode');
+    Route::post('users/isExistEmail',[UserController::class,'isExistEmail'])->name('admin.users.isExistEmail');
 
     // Kas
     Route::get('kas',[kasController::class,'index'])->name('admin.kas.index');
