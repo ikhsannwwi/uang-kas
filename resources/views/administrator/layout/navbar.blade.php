@@ -11,15 +11,23 @@
         <li class="nav-item nav-profile dropdown">
           <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
             <div class="nav-profile-img">
-              <img src="{{asset('template/assets/images/faces/face28.png')}}" alt="image">
+              @if (File_exists(public_path('administrator/users/' . auth()->user()->foto)))
+              <img src="{{asset('administrator/users/'.auth()->user()->foto)}}" alt="image">
+              @else
+              <img src="{{asset('administrator/users/default.svg')}}" alt="image">
+              @endif
             </div>
             <div class="nav-profile-text">
-              <p class="mb-1 text-black">Henry Klein</p>
+              <p class="mb-1 text-black">{{auth()->user()->name}}</p>
             </div>
           </a>
           <div class="dropdown-menu navbar-dropdown dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="profileDropdown" data-x-placement="bottom-end">
             <div class="p-3 text-center bg-primary">
-              <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{asset('template/assets/images/faces/face28.png')}}" alt="">
+              @if (File_exists(public_path('administrator/users/' . auth()->user()->foto)))
+              <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{asset('administrator/users/'.auth()->user()->foto)}}" alt="">
+              @else
+              <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{asset('administrator/users/default.svg')}}" alt="">
+              @endif
             </div>
             <div class="p-2">
               <h5 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h5>
@@ -47,7 +55,7 @@
                 <span>Reset Password</span>
                 <i class="mdi mdi-lock ml-1"></i>
               </a>
-              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('admin.logout')}}">
                 <span>Log Out</span>
                 <i class="mdi mdi-logout ml-1"></i>
               </a>
