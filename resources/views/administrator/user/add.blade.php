@@ -50,13 +50,21 @@
                     <span class="invalid-feedback d-block">{{$message}}</span>
                 @enderror
             </div>
+            @if(isset($foto))
+                <img src="{{ $foto}}" alt="Uploaded Image">
+            @endif
             <div class="form-group">
-                <label>File upload</label>
-                <input type="file" name="img[]" class="file-upload-default">
+                <label>Foto</label>
+                <input type="file" name="foto" 
+                class="file-upload-default"
+                id="fotoUpload"
+                accept="image/*">
                 <div class="input-group col-xs-12">
-                    <input name="foto" class="form-control file-upload-info @error('foto') is-invalid @enderror" disabled placeholder="Upload Image">
+                    <input name="foto"  class="form-control file-upload-info @error('foto') is-invalid @enderror" disabled placeholder="Upload Image">
                     <span class="input-group-append">
-                        <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
+                        <label class="file-upload-browse btn btn-primary" 
+                        type="button"
+                        for="fotoUpload">Select Image</label>
                     </span>
                 </div>
                 @error('foto')

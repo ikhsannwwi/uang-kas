@@ -168,16 +168,16 @@
     "positionClass": "toast-top-right",
     "preventDuplicates": false,
     "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 1000,
-    "timeOut": 5000,
+    "showDuration": 1000,
+    "hideDuration": 1700,
+    "timeOut": 8000,
     "extendedTimeOut": 1000,
     "showEasing": "swing",
     "hideEasing": "linear",
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
   };
-      toastr["success"]("{{ Session::get('success') }}")
+      toastr["success"]("{{ Session::get('success') }}",{ class: 'toast-success' })
       @endif
       </script>
     <script>
@@ -191,16 +191,16 @@
     "positionClass": "toast-top-right",
     "preventDuplicates": false,
     "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 1000,
-    "timeOut": 5000,
+    "showDuration": 1000,
+    "hideDuration": 1700,
+    "timeOut": 8000,
     "extendedTimeOut": 1000,
     "showEasing": "swing",
     "hideEasing": "linear",
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
   };
-      toastr["error"]("{{ Session::get('error') }}")
+      toastr["error"]("{{ Session::get('error') }}",{ class: 'toast-error' })
       @endif
     </script>
 @endpush

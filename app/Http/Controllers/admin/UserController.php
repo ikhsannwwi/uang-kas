@@ -48,6 +48,22 @@ class UserController extends Controller
         return view("administrator.user.add");
     }
 
+//     public function uploadImage(Request $request){
+//     $request->validate([
+//         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+//     ]);
+
+//     if ($request->hasFile('image')) {
+//         $image = $request->file('image');
+//         $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+//         // Tampilkan gambar sebelum disimpan
+//         return view('show_image')->with('image', $image);
+//     }
+
+//     // Tangani jika tidak ada gambar yang dipilih
+// }
+
     public function save(Request $request)
     {
         // Validasi data yang dikirimkan dalam request
@@ -73,11 +89,15 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'remember_token' => Str::random(60),
         ]);
-
-        if ($request->has('foto')) {
+        if (!$request->foto) {
             # code...
-
+            $data->foto = 'default.svg';
+        } elseif ($request->hasFile('foto')) {
+            $filename = Str::random(8). '.' . $request->file('foto')->extension();
+            $request->file('foto')->move('images/banner', $filename);
+            $data->foto = $filename;
         }
+
         $data->save();
 
         return redirect()->route('admin.users')->with('success','Data berhasil ditambahkan');
@@ -106,6 +126,12 @@ class UserController extends Controller
                 'konfirmasi_password' => 'required|min:8|max:255',
             ]);
         }
+        if ($request->foto) {
+            # code...
+            $validator = Validator::make($request->all(), [
+                'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+        }
         
         
         // dd($validator);
@@ -113,6 +139,8 @@ class UserController extends Controller
             return back()->withErrors($validator)->withInput();
         }
         
+        
+
         $data->update([
             'kode' => $request->kode,
             'name' => $request->name,
@@ -125,8 +153,24 @@ class UserController extends Controller
             $data->password = Hash::make($request->password);
         }
         
-        if ($request->has('foto')) {
+        if (!$request->foto) {
             # code...
+            if (File_exists(public_path('administrator/users/' . $data->foto))) { //either you can use file path instead of $data->image
+                $data->foto = $data->foto;
+            }else {
+                # code...
+                $data->foto = 'default.svg';
+            }
+        } elseif ($request->hasFile('foto')) {
+            if ($data->foto != 'default.svg') {
+                # code...
+                if (File_exists(public_path('administrator/users/' . $data->foto))) { //either you can use file path instead of $data->image
+                    unlink(public_path('administrator/users/' . $data->foto)); //here you can also use path like as ('uploads/media/welcome/'. $data->image)
+                }
+            }
+            $filename = Str::random(8). '.' . $request->file('foto')->extension();
+            $request->file('foto')->move('administrator/users', $filename);
+            $data->foto = $filename;
         }
         
         $data->update();
@@ -144,6 +188,9 @@ class UserController extends Controller
         $id = $request->id;
         
         $data = User::find($id);
+        if (File_exists(public_path('administrator/users/' . $data->foto))) { //either you can use file path instead of $data->image
+            unlink(public_path('administrator/users/' . $data->foto)); //here you can also use path like as ('uploads/media/welcome/'. $data->image)
+        }
 
         $data->delete();
 
