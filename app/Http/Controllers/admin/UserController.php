@@ -48,21 +48,6 @@ class UserController extends Controller
         return view("administrator.user.add");
     }
 
-//     public function uploadImage(Request $request){
-//     $request->validate([
-//         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-//     ]);
-
-//     if ($request->hasFile('image')) {
-//         $image = $request->file('image');
-//         $imageName = time() . '.' . $image->getClientOriginalExtension();
-
-//         // Tampilkan gambar sebelum disimpan
-//         return view('show_image')->with('image', $image);
-//     }
-
-//     // Tangani jika tidak ada gambar yang dipilih
-// }
 
     public function save(Request $request)
     {
@@ -75,6 +60,11 @@ class UserController extends Controller
             'konfirmasi_password' => 'required|min:8|max:255|same:password',
             // Tambahkan aturan validasi lainnya yang Anda butuhkan
         ]);
+        if ($request->foto) {
+            $validator->addRules([
+                'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+        }
 
         
         // dd($validator);
@@ -114,30 +104,29 @@ class UserController extends Controller
         
         // Validasi data yang dikirimkan dalam request
         $validator = Validator::make($request->all(), [
-            'kode' => 'required|max:4|string|unique:users,kode,' .$id,
+            'kode' => 'required|max:4|string|unique:users,kode,' . $id,
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' .$id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             // Tambahkan aturan validasi lainnya yang Anda butuhkan
         ]);
-        if ($request->password) {
-            # code...
-            $validator = Validator::make($request->all(), [
+
+        if ($request->password || $request->konfirmasi_password) {
+            $validator->addRules([
                 'password' => 'required|min:8|max:255',
-                'konfirmasi_password' => 'required|min:8|max:255',
+                'konfirmasi_password' => 'required|min:8|max:255|same:password',
             ]);
         }
+
         if ($request->foto) {
-            # code...
-            $validator = Validator::make($request->all(), [
+            $validator->addRules([
                 'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         }
-        
-        
-        // dd($validator);
+
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
+
         
         
 
@@ -188,21 +177,15 @@ class UserController extends Controller
         $id = $request->id;
         
         $data = User::find($id);
-        if (File_exists(public_path('administrator/users/' . $data->foto))) { //either you can use file path instead of $data->image
-            unlink(public_path('administrator/users/' . $data->foto)); //here you can also use path like as ('uploads/media/welcome/'. $data->image)
+        if ($data->foto != 'default.svg') {
+            # code...
+            if (File_exists(public_path('administrator/users/' . $data->foto))) { //either you can use file path instead of $data->image
+                unlink(public_path('administrator/users/' . $data->foto)); //here you can also use path like as ('uploads/media/welcome/'. $data->image)
+            }
         }
 
         $data->delete();
 
         return redirect()->route('admin.users')->with('succes','Data berhasil dihapus');
-    }
-
-
-    public function isExistEmail(){
-        
-    }
-    
-    public function isExistKode(){
-
     }
 }
