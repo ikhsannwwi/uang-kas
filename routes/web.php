@@ -40,17 +40,19 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('users/edit/{id}',[UserController::class,'edit'])->name('admin.users.edit');
         Route::put('users/update/{id}',[UserController::class,'update'])->name('admin.users.update');
         Route::delete('users/delete',[UserController::class,'delete'])->name('admin.users.delete');
-        Route::get('users/detail/{id}',[UserController::class,'detail'])->name('admin.users.detail');
-        Route::post('users/isExistKode',[UserController::class,'isExistKode'])->name('admin.users.isExistKode');
-        Route::post('users/isExistEmail',[UserController::class,'isExistEmail'])->name('admin.users.isExistEmail');
-    
+        Route::get('users/detail/{kode}',[UserController::class,'detail'])->name('admin.users.detail');
+        Route::put('users/resetPassword/{id}',[UserController::class,'resetPassword'])->name('admin.users.resetPassword');
+        Route::put('users/resetPIN/{id}',[UserController::class,'resetPIN'])->name('admin.users.resetPIN');
+        Route::put('users/updateProfile/{kode}',[UserController::class,'updateProfile'])->name('admin.users.updateProfile');
+        
         // Kas
-        Route::get('kas',[kasController::class,'index'])->name('admin.kas.index');
+        Route::get('kas',[kasController::class,'index'])->name('admin.kas');
         Route::get('kas/getdata',[kasController::class,'getdata'])->name('admin.kas.getdata');
         Route::get('kas/add',[kasController::class,'add'])->name('admin.kas.add');
         Route::post('kas/save',[kasController::class,'save'])->name('admin.kas.save');
         Route::get('kas/edit/{id}',[kasController::class,'edit'])->name('admin.kas.edit');
-        Route::post('kas/update/{id}',[kasController::class,'update'])->name('admin.kas.update');
-        Route::get('kas/delete/{id}',[kasController::class,'delete'])->name('admin.kas.delete');
+        Route::put('kas/update/{id}',[kasController::class,'update'])->name('admin.kas.update');
+        Route::delete('kas/delete',[kasController::class,'delete'])->name('admin.kas.delete');
+        Route::get('kas/detail/getdetail{id}',[kasController::class,'detail'])->name('admin.kas.detail');
     });
 });

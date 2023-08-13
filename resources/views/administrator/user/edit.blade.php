@@ -1,12 +1,6 @@
 @extends('administrator.layout.main')
 
 @section('content')
-
-@push('title')
-    Edit User
-@endpush
-
-@section('content')
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
@@ -92,102 +86,9 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function() {
-        const form = document.getElementById("myForm");
-
-            var validator = FormValidation.formValidation(form, {
-                fields: {
-                    kode: {
-                        validators: {
-                            notEmpty: {
-                                message: "Silahkan isi Kode",
-                            },
-                            // remote: {
-                            //     message: "Kode ini sudah dipakai",
-                            //     method: "POST",
-                            //     url: "{{ route('admin.users.isExistKode') }}",
-                            //     data: function(){
-                            //         return {
-                            //             _token: "{{ csrf_token() }}",
-                            //         }
-                            //     },
-                            // },
-                        },
-                    },
-                    name: {
-                        validators: {
-                            notEmpty: {
-                                message: "Silahkan isi Nama",
-                            },
-                        },
-                    },
-                    email: {
-                        validators: {
-                            notEmpty: {
-                                message: "Silahkan isi Email",
-                            },
-                            emailAddress: {
-                                message: "Format email tidak valid",
-                            },
-                            // remote: {
-                            //     message: "Email ini sudah dipakai",
-                            //     method: "POST",
-                            //     url: "{{ route('admin.users.isExistEmail') }}",
-                            //     data: function(){
-                            //         return {
-                            //             _token: "{{ csrf_token() }}",
-                            //         }
-                            //     },
-                            // },
-                        },
-                    },
-                    password: {
-                        validators: {
-                            notEmpty: {
-                                message: "Silahkan isi Password",
-                            },
-                            stringLength: {
-                                min: 8,
-                                message: "Password minimal harus terdiri dari 8 karakter",
-                            },
-                        },
-                    },
-                    konfirmasi_password: {
-                        validators: {
-                            notEmpty: {
-                                message: "Silahkan Konfirmasi Password",
-                            },
-                            identical: {
-                                compare: function() {
-                                    return form.querySelector('[name="password"]').value;
-                                },
-                                message: "Konfirmasi Password harus sama dengan Password",
-                            },
-                        },
-                        
-                    },
-                },
-
-                plugins: {
-                    trigger: new FormValidation.plugins.Trigger(),
-                    // trigger: new FormValidation.plugins.Trigger(),
-                    bootstrap: new FormValidation.plugins.Bootstrap5({
-                        rowSelector: ".form-group",
-                        eleInvalidClass: "is-invalid",
-                        eleValidClass: "",
-                    }),
-                },
-            });
-            const submitButton = document.getElementById("submitForm");
-            submitButton.addEventListener("click", function (e) {
-                e.preventDefault();
-            });
+        
     });
-    </script>
+</script>
 
 
-@endpush
-@endsection
-
-@push('js')
-    
 @endpush

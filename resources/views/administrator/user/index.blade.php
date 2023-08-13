@@ -1,9 +1,5 @@
 @extends('administrator.layout.main')
 
-@push('title')
-    Users
-@endpush
-
 @section('content')
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -69,6 +65,8 @@
       </div>
     </div>
   </div>
+
+  @include('administrator.user.modal.detail')
 @endsection
 @php
     $Route = route('admin.users');
@@ -91,6 +89,7 @@
             processing: true,
             serverSide: true,
             order: [[0, 'desc']],
+            scrollX: true, // Enable horizontal scrolling
             ajax: {
                 url: '{{ route('admin.users.getdata') }}',
                 dataType: "JSON",
@@ -144,13 +143,15 @@
                     "id": id,
                 },
                 success: function() {
+                    data_table.ajax.url('{{ route('admin.users.getdata') }}').load();
+
                     swalWithBootstrapButtons.fire(
                         'Berhasil dihapus!',
                         'Data berhasil dihapus.',
                         'success'
                     );
                     // data_table.ajax.reload(null,false)
-                    window.location.href = "<?php echo $Route; ?>";
+                    // window.location.href = "<?php echo $Route; ?>";
                 }
             });
         }
@@ -158,49 +159,5 @@
 });
 
 
-@if (session()->has('success'))
-    toastr.options = {
-    "closeButton": true,
-    "debug": false,
-    "newestOnTop": false,
-    "progressBar": true,
-    "rtl": false,
-    "positionClass": "toast-top-right",
-    "preventDuplicates": false,
-    "onclick": null,
-    "showDuration": 1000,
-    "hideDuration": 1700,
-    "timeOut": 8000,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-  };
-      toastr["success"]("{{ Session::get('success') }}",{ class: 'toast-success' })
-      @endif
-      </script>
-    <script>
-        @if (session()->has('error'))
-    toastr.options = {
-    "closeButton": true,
-    "debug": false,
-    "newestOnTop": false,
-    "progressBar": true,
-    "rtl": false,
-    "positionClass": "toast-top-right",
-    "preventDuplicates": false,
-    "onclick": null,
-    "showDuration": 1000,
-    "hideDuration": 1700,
-    "timeOut": 8000,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-  };
-      toastr["error"]("{{ Session::get('error') }}",{ class: 'toast-error' })
-      @endif
-    </script>
+</script>
 @endpush

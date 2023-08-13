@@ -2,184 +2,233 @@
 
 namespace App\Http\Controllers\admin;
 
+use DataTables;
+use App\Models\User;
 use App\Models\admin\kas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class kasController extends Controller
 {
-    public function index()
-    {
-        return view("administrator.kas.index");
+    public function index(){
+
+        $data_user = User::all();
+
+        $notifikasiTerakhirSetiapUser = kas::with('user')
+            ->select('user_kode', DB::raw('MAX(tanggal) as tanggal_terakhir'))
+            ->groupBy('user_kode')
+            ->orderBy('tanggal_terakhir', 'desc')
+            ->get();
+
+        $notifikasiTerakhir = [];
+
+        foreach ($notifikasiTerakhirSetiapUser as $notifikasiUser) {
+            $notifikasi = kas::where('user_kode', $notifikasiUser->user_kode)
+                ->where('tanggal', $notifikasiUser->tanggal_terakhir)
+                ->with('user')
+                ->first();
+
+            if ($notifikasi) {
+                $notifikasi->tanggal = \Carbon\Carbon::parse($notifikasi->tanggal); // Ubah ke objek Carbon
+                $notifikasiTerakhir[] = $notifikasi;
+            }
+        }
+
+
+        // $notifikasi = kas::with('user')
+        //     ->where('user_kode', auth()->user()->kode)
+        //     ->orderBy('tanggal', 'desc')
+        //     ->first();
+        //         # code...
+        // // Session::flash('notifikasi', $notifikasi);
+        // session(['notifikasi' => $notifikasi]);
+
+        // dd($notifikasi);
+
+        return view('administrator.kas.index',compact('data_user','notifikasiTerakhir'));
     }
 
-    public function getData(Request $request)
-    {
-        $query = kas::select(DB::raw('kas.*, user.name as user'))
-        ->Join(DB::raw('user'), 'user.id', '=', 'kas.user');
-
-        $data = $query->get();
-
-        return DataTables::of($data)
+    public function getdata(Request $request) {
+        $data = kas::query()->with('user');
+    
+        if ($request->status) {
+            $status = $request->status == "pemasukan" ? 1 : 0;
+            $data = $data->where("status", $status);
+        }
+        if ($request->user) {
+            $filter_user = $request->user;
+            $data = $data->where("user_kode", $filter_user);
+        }
+    
+        return Datatables::eloquent($data)
+            ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = "";
-                $btn .= '<a href="'.route('admin.kas.edit',$row->id).'" class="btn btn-primary btn-sm me-3 label-button-crud">
-                Edit
-            </a>';
-                $btn .= '<a href="#" data-ix="' . $row->id . '" class="btn btn-danger btn-sm delete me-3 label-button-crud">
-                Delete
-            </a>';
+                $btn = '';
+                $btn .= '<a href="#" data-id="' . $row->id . '" class="btn btn-danger btn-sm delete me-3 label-button-crud">
+                    Delete
+                </a>';
+    
+                $btn .= '<a href="' . route('admin.kas.edit', $row->id) . '" class="btn btn-primary btn-sm me-3 label-button-crud">
+                    Edit
+                </a>';
+    
+                $btn .= '<a href="#" class="btn btn-secondary btn-sm me-3 label-button-crud" data-id="' . $row->id . '" data-bs-toggle="modal" data-bs-target="#detailKas">
+                    Detail
+                </a>';
+    
                 return $btn;
-            })->rawColumns(['user', 'kas' , 'action'])->make(true);
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+    
 
     public function add()
     {
+        if (auth()->user()->kode == 'K000') {
+            # code...
+            $data_user = User::all();
+        } else {
+            $data_user = '';
+        }
         
-
-        $user_groups = UserGroup::where("user_groups.status", 1)->get();
-        return view("administrator.users.add",compact("user_groups"));
-        // return view("administrator.users.example.add",compact("user_groups"));
+        return view("administrator.kas.add",compact('data_user'));
     }
+
 
     public function save(Request $request)
     {
-        
-
-        // dd($request);
-        $this->validate($request, [
-            'name'      => ['required', 'string', 'max:255'],
-            'email'     => ['required', 'string', 'email', 'max:255'],
-            'password'  => ['required', 'string', 'min:8', 'confirmed'],
+        // Validasi data yang dikirimkan dalam request
+        $validator = Validator::make($request->all(), [
+            'pemasukan_pengeluaran' => 'required',
+            'tanggal' => 'required',
+            'status' => 'required',
+            // Tambahkan aturan validasi lainnya yang Anda butuhkan
         ]);
 
-        $data = [
-            'user_group_id'     => $request->user_group,
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'customer_id'       => $request->customer_id,
-            'password'          => Hash::make($request->password),
-            'status'            => $request->has('status') ? 1 : 0,
-        ];
-
-        $user = User::create($data);
-        
-        //Write log
-        createLog(static::$module, __FUNCTION__, $user->id);
-        return redirect(route('admin.users'))->with(['success' => 'Data berhasil ditambahkan.']);
-    }
-
-    public function detail($id)
-    {
-        
-
-        $detail = User::find($id);
-        if (!$detail) {
-            return abort(404);
+        if ($request->keterangan) {
+            $validator->addRules([
+                'keterangan' => 'required',
+            ]);
         }
 
-        return view('administrator.users.detail', compact("detail"));
-    }
-
-    public function edit($id)
-    {
-        
-        
-        $edit = User::find($id);
-        if (!$edit) {
-            return abort(404);
+        if (auth()->user()->kode == 'K000') {
+            $validator->addRules([
+                'user_kode' => 'required',
+            ]);
         }
-        $user_groups = UserGroup::where("user_groups.status", 1)->get();
-        $getCustomer = User::select('customers.*', 'customers.name as customer_name', 'customers.company_name as company_name')
-        ->join(('customers'), 'customers.id', '=', 'users.customer_id')
-        ->where(['users.id' => $id])
-        ->first();
-        // dd($getCustomer);
 
-        // return view("administrator.users.example.edit", compact("user_groups", "edit", "getCustomer"));
-        return view("administrator.users.edit", compact("user_groups", "edit", "getCustomer"));
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+
+
+
+        $user_kode = $request->user_kode;
+        $pemasukan_pengeluaran = $request->pemasukan_pengeluaran;
+        $tanggal = $request->tanggal;
+        $statusArray = $request->status;
+        $keterangan = $request->keterangan;
+    
+        // Loop through the data and create records
+        foreach ($statusArray as $index => $status) {
+            $data = kas::create([
+                'user_kode' => $user_kode[$index],
+                'pemasukan_pengeluaran' => $pemasukan_pengeluaran[$index],
+                'tanggal' => $tanggal[$index],
+                'status' => $status,
+            ]);
+    
+            // Additional processing if needed
+            if ($keterangan[$index]) {
+                # code...
+                $data->keterangan = $keterangan[$index];
+            }
+            // dd($pemasukan_pengeluaran[$index]);
+        }
+
+        $data->save();
+
+        return redirect()->route('admin.kas')->with('success','Data berhasil ditambahkan');
     }
 
-    public function update(Request $request)
-    {
-        
+    public function edit($id) {
+        $data = kas::find($id);
 
-        $this->validate($request, [
-            'name' => 'required'
+        if (auth()->user()->kode == 'K000') {
+            # code...
+            $data_user = User::all();
+        } else {
+            $data_user = '';
+        }
+
+        return view('administrator.kas.edit',compact('data','data_user'));
+    }
+    
+    public function update(Request $request, $id){
+        $data = kas::find($id);
+        
+        // Validasi data yang dikirimkan dalam request
+        $validator = Validator::make($request->all(), [
+            'pemasukan_pengeluaran' => 'required|integer|min:500',
+            'tanggal' => 'required',
+            'status' => 'required',
+            // Tambahkan aturan validasi lainnya yang Anda butuhkan
         ]);
 
-        // dd($request);
-        $data = [
-            'user_group_id'     => $request->user_group,
-            'name'              => $request->name,
-            'email'             => $request->email,
-            'customer_id'       => $request->customer_id,
-            'status'            => $request->has('status') ? 1 : 0,
-        ];
-
-        if($request->has('password') && $request->password != ""){
-            $data['password'] = Hash::make($request->password);
+        if ($request->keterangan) {
+            $validator->addRules([
+                'keterangan' => 'required|min:3|max:255',
+            ]);
         }
 
-        $id = $request->id;
-        $user = User::find($id);
+        if (auth()->user()->kode == 'K000') {
+            $validator->addRules([
+                'user_kode' => 'required',
+            ]);
+        }
 
-        User::where('id', $id)->update($data);
-        //Write log
-        createLog(static::$module, __FUNCTION__, $id);
-        return redirect(route('admin.users'))->with(['success' => 'Data berhasil diupdate.']);
-    }
-
-    public function delete(Request $request)
-    {
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+        
         
 
-        $id = $request->ix;
-        $user_group = User::find($id);
-        $data = User::destroy($request->ix);
-        //Write log
-        createLog(static::$module, __FUNCTION__, $id);
+        $data->update([
+            'user_kode' => $request->user_kode,
+            'pemasukan_pengeluaran' => $request->pemasukan_pengeluaran,
+            'tanggal' => $request->tanggal,
+            'status' => $request->status,
+        ]);
+        if ($request->keterangan) {
+            # code...
+            $data->keterangan = $request->keterangan;
+        }
+        
+        $data->update();
+        
+        return redirect()->route('admin.kas')->with('success','Data berhasil diupdate');
+    }
+    
+    public function detail($id) {
+        $data = kas::where('id',$id)->with('user')->first();
+
         return response()->json($data);
     }
+    
+    public function delete(Request $request) {
+        $id = $request->id;
+        
+        $data = kas::find($id);
 
-    public function changeStatus(Request $request)
-    {
-        $data['status'] = $request->status == "active" ? 1 : 0;
-        $id = $request->ix;
-        if (auth()->user()->id == $id) {
-            return response()->json(['massage' => 'You can'."'".'t change your own status.']);
-        }
-        User::where(["id" => $id])->update($data);
-        //Write log
-        createLog(static::$module, __FUNCTION__, $id);
-        return redirect(route('admin.users'))->with(['success' => 'Status has changed.']);
+        $data->delete();
+
+        return redirect()->route('admin.kas')->with('succes','Data berhasil dihapus');
     }
 
-    public function getCustomer(Request $request)
-    {        
-        $query = Customers::select('customers.*')->get();
-                        
-        return DataTables::of($query)->make(true);
-    }
-
-    public function isExistEmail(Request $request){
-        if($request->ajax()){
-            $users = User::select("*");
-
-            if(isset($request->email)){
-                $users->where('email', $request->email);
-            }
-
-            if(isset($request->id)){
-                $users->where('id', '<>', $request->id);
-            }
-
-            $data = [ 'valid' => ( $users->count() == 0)  ];
-            if(!empty($users)){
-                return $data;
-            }else{
-                return $data;
-            }
-        }
-    }
+    
 }

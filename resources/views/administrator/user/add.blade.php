@@ -1,9 +1,5 @@
 @extends('administrator.layout.main')
 
-@push('title')
-    Add User
-@endpush
-
 @section('content')
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -17,35 +13,35 @@
         @csrf
             <div class="form-group">
               <label for="kode" class="label-required">Kode</label>
-              <input type="text" class="form-control @error('kode') is-invalid @enderror" name="kode" id="kode" placeholder="Masukkan Kode">
+              <input type="text" autocomplete="off" class="form-control @error('kode') is-invalid @enderror" name="kode" id="kode" placeholder="Masukkan Kode">
                 @error('kode')
                     <span class="invalid-feedback d-block">{{$message}}</span>
                 @enderror
             </div>
             <div class="form-group">
                 <label for="exampleInputName1" class="label-required">Name</label>
-                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama">
+                <input type="text" autocomplete="off" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Masukkan Nama">
                 @error('name')
                     <span class="invalid-feedback d-block">{{$message}}</span>
                 @enderror
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail3" class="label-required">Email address</label>
-                <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Masukkan E-Mail">
+                <input type="email" autocomplete="off" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Masukkan E-Mail">
                 @error('email')
                     <span class="invalid-feedback d-block">{{$message}}</span>
                 @enderror
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword4" class="label-required">Password</label>
-                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Masukkan Password">
+                <input type="password" autocomplete="off" class="form-control @error('password') is-invalid @enderror" name="password" id="password" placeholder="Masukkan Password">
                 @error('password')
                     <span class="invalid-feedback d-block">{{$message}}</span>
                 @enderror
             </div>
             <div class="form-group">
                 <label for="konfirmasi_password" class="label-required">Password Konfirmasi</label>
-                <input type="password" class="form-control @error('konfirmasi_password') is-invalid @enderror" name="konfirmasi_password" id="konfirmasi_password" placeholder="Masukkan Konfirmasi Password">
+                <input type="password" autocomplete="off" class="form-control @error('konfirmasi_password') is-invalid @enderror" name="konfirmasi_password" id="konfirmasi_password" placeholder="Masukkan Konfirmasi Password">
                 @error('konfirmasi_password')
                     <span class="invalid-feedback d-block">{{$message}}</span>
                 @enderror

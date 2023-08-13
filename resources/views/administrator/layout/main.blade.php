@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{csrf_token()}}">
-    <title>@stack('title')- Kas Kosan</title>
+    <title>@stack('title')Kas Kosan</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('template/assets/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('template/assets/vendors/flag-icon-css/css/flag-icon.min.css')}}">
@@ -45,13 +45,15 @@
         <!-- partial:partials/_sidebar.html -->
         @include('administrator.layout.sidebar')
         
+        <!-- partial:partials/_modal.html -->
+        @include('administrator.layout.modal')
         <!-- partial -->
         <div class="main-panel">
 
             {{-- content main --}}
             @yield('content')
             {{-- end content main --}}
-          
+
             {{-- footer --}}
             @include('administrator.layout.footer')
             {{-- end footer --}}
@@ -100,12 +102,45 @@
 
     {{-- SweetAlert Js --}}
     <script src="{{ asset('assets/sweetalert2/dist/sweetalert2.min.js') }}"></script>
+    {{-- Moment Js --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <!-- Optional FormValidation Plugins (Choose the ones you need) -->
     <!-- Other head elements -->
     <!-- Add other plugins if needed -->
 
-    
+      <script>
+        toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "rtl": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": 1000,
+        "hideDuration": 500,
+        "timeOut": 10000,
+        "extendedTimeOut": 8000,
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      };
+      @if (session()->has('errors'))
+       @foreach (session('errors') as $error)
+          toastr["error"]("{!! $error !!}",{ class: 'toast-error' })
+        @endforeach
+      @endif
+      @if (session()->has('error'))
+        toastr["error"]("{{ Session::get('error') }}",{ class: 'toast-error' })
+        @endif
+      @if (session()->has('success'))
+        toastr["success"]("{{ Session::get('success') }}",{ class: 'toast-success' })
+      @endif
+      </script>
+      
 
     @stack('js')
     <!-- End Custom js -->

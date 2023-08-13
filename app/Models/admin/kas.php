@@ -2,8 +2,9 @@
 
 namespace App\Models\admin;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class kas extends Model
 {
@@ -11,5 +12,15 @@ class kas extends Model
 
     protected $table = 'kas';
 
-    protected $guard = 'id';
+    protected $fillable = [
+        'user_kode',
+        'pemasukan_pengeluaran',
+        'tanggal',
+        'keterangan',
+        'status'
+    ];
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_kode', 'kode');
+    }
 }

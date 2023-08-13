@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\admin\userProfile;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -22,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'foto',
+        'pin',
     ];
 
     /**
@@ -46,5 +49,9 @@ class User extends Authenticatable
 
     public function kas(){
         return $this->hasMany(kas::class, 'user_kode', 'kode');
+    }
+    
+    public function user_profile(){
+        return $this->belongsTo(userProfile::class, 'kode', 'user_kode');
     }
 }

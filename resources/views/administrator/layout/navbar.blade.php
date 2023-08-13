@@ -31,28 +31,37 @@
             </div>
             <div class="p-2">
               <h5 class="dropdown-header text-uppercase pl-2 text-dark">User Options</h5>
-              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" 
+              href="#" data-bs-toggle="modal" data-bs-target="#inboxModal">
                 <span>Inbox</span>
                 <span class="p-0">
                   <span class="badge badge-primary">3</span>
                   <i class="mdi mdi-email-open-outline ml-1"></i>
                 </span>
               </a>
-              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" 
+              href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
                 <span>Profile</span>
                 <span class="p-0">
                   <span class="badge badge-success">1</span>
                   <i class="mdi mdi-account-outline ml-1"></i>
                 </span>
               </a>
-              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="javascript:void(0)">
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" 
+              href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#settingModal">
                 <span>Settings</span>
                 <i class="mdi mdi-settings"></i>
               </a>
               <div role="separator" class="dropdown-divider"></div>
               <h5 class="dropdown-header text-uppercase  pl-2 text-dark mt-2">Actions</h5>
-              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between"
+                href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
                 <span>Reset Password</span>
+                <i class="mdi mdi-lock ml-1"></i>
+              </a>
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between"
+                href="#" data-bs-toggle="modal" data-bs-target="#resetPINModal">
+                <span>Reset PIN</span>
                 <i class="mdi mdi-lock ml-1"></i>
               </a>
               <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="{{route('admin.logout')}}">
@@ -156,3 +165,4 @@
       </button>
     </div>
   </nav>
+

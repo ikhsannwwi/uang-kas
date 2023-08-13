@@ -14298,9 +14298,59 @@ dl {
 .toast-error{
     background-color: red !important;
 }
+.toast-warning{
+    background-color: orange !important;
+}
 
 
 .label-required::after {
     content: " *";
     color: red;
+}
+
+/* profile Modal */
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.edit-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.edit-profile-container {
+    display: none; /* Mulai dengan menyembunyikan form edit */
+}
+.profile-name-picture {
+    margin-right: 20px;
+    text-align: center;
+}
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+.profile-name {
+    font-size: 1.5rem;
+    margin: 0;
+}
+.profile-details {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+.profile-detail-items {
+    margin: 5px 0;
+}
+.profile-detail-items a {
+    text-decoration: none;
+    color: #007bff;
 }
