@@ -54,5 +54,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('kas/update/{id}',[kasController::class,'update'])->name('admin.kas.update');
         Route::delete('kas/delete',[kasController::class,'delete'])->name('admin.kas.delete');
         Route::get('kas/detail/getdetail{id}',[kasController::class,'detail'])->name('admin.kas.detail');
+        Route::get('kas/total/getTotal',[kasController::class,'total'])->name('admin.kas.total');
     });
 });

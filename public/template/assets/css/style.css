@@ -14318,12 +14318,11 @@ dl {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    position: relative;
 }
 .edit-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 .edit-profile-container {
     display: none; /* Mulai dengan menyembunyikan form edit */
@@ -14353,4 +14352,14 @@ dl {
 .profile-detail-items a {
     text-decoration: none;
     color: #007bff;
+}
+
+.color-green{
+  color: green;
+}
+.color-red{
+  color: red;
+}
+.color-blue{
+  color: blue;
 }

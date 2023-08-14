@@ -7,10 +7,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="profile-container">
-                <a href="javascript:void(0)" class="btn btn-primary edit-button" id="editProfileButton">
+                <a href="javascript:void(0)" class="btn btn-primary edit-button mb-3" id="editProfileButton">
                     <i class="mdi mdi-lead-pencil"></i> Edit Profil
                 </a>
+            <div class="profile-container">
                 <div class="profile-name-picture">
                     @if (File_exists(public_path('administrator/users/' . auth()->user()->foto)))
                     <img class="profile-picture" src="{{asset('administrator/users/'.auth()->user()->foto)}}" alt="">
@@ -121,11 +121,13 @@
               profileContainer.css("display", "none");
               editProfileContainer.css("display", "block");
               saveButton.removeClass('d-none');
+              editProfileButton.addClass('d-none');
           });
           profileButton.click(function() {
               profileContainer.css("display", "flex");
               editProfileContainer.css("display", "none");
               saveButton.addClass('d-none');
+              editProfileButton.removeClass('d-none');
           });
       });
   </script>

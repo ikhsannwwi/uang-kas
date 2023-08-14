@@ -10,12 +10,11 @@
             </div>
             <div class="col-md-6">
                 <div class="d-flex float-end gap-2">
-                    <button type="button" id="btn_filter" class="btn btn-primary label-button-master my-3">
-                        <i class="bi bi-filter"></i> Filter
-                    </button>
+                    @if (auth()->user()->kode == 'K000')
                     <a href="{{ route('admin.users.add')}}" class="btn btn-primary label-button-master my-3">
                         <i class="mdi mdi-file-check btn-icon-prepend"></i> Tambah
                     </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -58,7 +57,7 @@
               <th>Kode</th>
               <th>Nama</th>
               <th>Email</th>
-              <th width="15px">Action</th>
+              <th>Action</th>
             </tr>
           </thead>
         </table>

@@ -22,19 +22,27 @@ class UserController extends Controller
 
     public function getdata(){
         $data = User::query();
+        if (auth()->user()->kode != 'K000') {
+            # code...
+            $data->where('kode',auth()->user()->kode);
+        } else {
+            $data;
+        }
 
         return Datatables::eloquent($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
                 $btn = "";
-                $btn .= '<a href="#" data-id="' . $row->id . '" data-title="' . $row->name . '" class="btn btn-danger btn-sm delete me-3 label-button-crud">
-                    Delete
-                </a>';
+                if (auth()->user()->kode == 'K000') {
+                    # code...
+                    $btn .= '<a href="#" data-id="' . $row->id . '" data-title="' . $row->name . '" class="btn btn-danger btn-sm delete me-3 label-button-crud">
+                        Delete
+                    </a>';
+                }
                 
                 $btn .= '<a href="'.route('admin.users.edit',$row->id).'" class="btn btn-primary btn-sm me-3 label-button-crud">
                     Edit
                 </a>';
-                
                 $btn .= '<a href="#" class="btn btn-secondary btn-sm me-3 label-button-crud" data-kode="' . $row->kode . '" data-bs-toggle="modal" data-bs-target="#detailUser">
                     Detail
                 </a>';

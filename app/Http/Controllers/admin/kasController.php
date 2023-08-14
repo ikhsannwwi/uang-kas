@@ -220,6 +220,22 @@ class kasController extends Controller
         return response()->json($data);
     }
     
+    public function total() {
+        $data = kas::with('user')->get();
+        $pemasukan = $data->where('status', 1)->sum('pemasukan_pengeluaran'); // Menggunakan sum() untuk menghitung jumlah pemasukan
+        $pengeluaran = $data->where('status', 0)->sum('pemasukan_pengeluaran'); // Menggunakan sum() untuk menghitung jumlah pengeluaran
+        $total = $pemasukan - $pengeluaran;
+    
+        // Mengembalikan data dalam format JSON
+        return response()->json([
+            'pemasukan' => $pemasukan,
+            'pengeluaran' => $pengeluaran,
+            'total' => $total
+        ]);
+    }
+    
+    
+    
     public function delete(Request $request) {
         $id = $request->id;
         

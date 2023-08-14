@@ -1,4 +1,4 @@
-<!-- Modal -->
+<!-- Modal Detail Kas-->
   <div class="modal fade" id="detailKas" tabindex="-1" aria-labelledby="detailKasLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
@@ -39,19 +39,22 @@
             url: '{{ route("admin.kas.detail", ":id") }}'.replace(':id', id),
             method: 'GET',
             success: function(data) {
-                var tipeTransaksi = (data.status === 1) ? 'Pemasukan' : 'Pengeluaran';
-                var tanggal = moment(data.tanggal).format('D MMMM YYYY');
-                var amountData = parseFloat(data.pemasukan_pengeluaran);
-                var jumlah = (data.status === 1) ? formatCurrency(amountData) : formatCurrency(-amountData);
-                
-                modalBody.html(
-                    '<p>ID: ' + data.id + '</p>' +
-                    '<p>Nama Pengguna: ' + data.user.name + '</p>' +
-                    '<p>Tipe Transaksi: ' + tipeTransaksi + '</p>' +
-                    '<p>Jumlah: ' + jumlah + '</p>' +
-                    '<p>Keterangan: ' + data.keterangan + '</p>' +
-                    '<p>Tanggal Transaksi: ' + tanggal + '</p>'
-                );
+              var tipeTransaksi = (data.status === 1) ? 'Pemasukan' : 'Pengeluaran';
+              var tanggal = moment(data.tanggal).format('D MMMM YYYY');
+              var amountData = parseFloat(data.pemasukan_pengeluaran);
+              var jumlah = (data.status === 1) ? formatCurrency(amountData) : formatCurrency(-amountData);
+
+              var jumlahHTML = '<span class="' + ((data.status === 0) ? 'color-red' : 'color-green') + '">' + jumlah + '</span>';
+
+              modalBody.html(
+                  '<p>ID: ' + data.id + '</p>' +
+                  '<p>Nama Pengguna: ' + data.user.name + '</p>' +
+                  '<p>Tipe Transaksi: ' + tipeTransaksi + '</p>' +
+                  '<p>Jumlah: ' + jumlahHTML + '</p>' +
+                  '<p>Keterangan: ' + data.keterangan + '</p>' +
+                  '<p>Tanggal Transaksi: ' + tanggal + '</p>'
+              );
+
                 loadingSpinner.hide(); // Sembunyikan elemen animasi setelah data dimuat
             }
         });

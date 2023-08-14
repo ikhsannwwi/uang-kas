@@ -11,7 +11,12 @@
             <div class="col-md-6">
                 <div class="d-flex float-end gap-2">
                     <button type="button" id="btn_filter" class="btn btn-primary label-button-master my-3">
-                        <i class="bi bi-filter"></i> Filter
+                        <i class="mdi mdi-filter-variant"></i> Filter
+                    </button>
+                    <button type="button" id="totalKasButton" 
+                    class="btn btn-primary label-button-master my-3"
+                    data-bs-toggle="modal" data-bs-target="#totalKas">
+                        <i class="mdi mdi-cash-usd"></i> Total Kas
                     </button>
                     <a href="{{ route('admin.kas.add')}}" class="btn btn-primary label-button-master my-3">
                         <i class="mdi mdi-file-check btn-icon-prepend"></i> Tambah
